@@ -1,0 +1,9 @@
+{
+  "makefile.launchConfigurations": [
+    {
+      "cwd": "/home/devdias93/ED/TP3/bin",
+      "binaryPath": "/home/devdias93/ED/TP3/bin/tp3.out",
+      "binaryArgs": []
+    }
+  ]
+}

@@ -1,8 +1,10 @@
 #include "matrix.hpp"
+#include "segTree.hpp"
 
 using namespace std;
-int main() {
-    // Cria duas matrizes para teste
+
+int TestMultiply() {
+  // Cria duas matrizes para teste
   Matrix matrix1(2, 3);
   Matrix matrix2(3, 2);
 
@@ -31,7 +33,30 @@ int main() {
 
   // Imprime o resultado da multiplicação
   cout << "\nResultado da multiplicação:" << endl;
+  Matrix m = *result;
   result->print();
-  delete result;
+
+  cout << "m" << endl;
+  m.print();
+
+  return 0;
+}
+
+int main() {
+  // Criar um array de matrizes para teste
+  Matrix matrices[] = {Matrix{2, 2}, Matrix{2, 2}, Matrix{2, 2}};  // Adicione suas próprias matrizes conforme necessário
+
+  for(int i = 0; i < 3; i++){
+    matrices[i].setElement(0,0,i+1);
+    matrices[i].setElement(1,1,i+1);
+  }
+
+  // Criar uma árvore de segmentação
+  SegmentTree segmentTree(matrices, sizeof(matrices) / sizeof(matrices[0]));
+
+  // Imprimir a árvore
+  cout << "Árvore de Segmentação:" << endl;
+  segmentTree.print();
+
   return 0;
 }

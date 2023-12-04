@@ -27,11 +27,11 @@ class Matrix {
   ~Matrix() {
     // Libera a memória de cada coluna em cada linha
     for (int i = 0; i < rows; ++i) {
-      delete[] data[i];
+      // delete[] data[i];
     }
 
     // Libera a memória das linhas
-    delete[] data;
+   // delete[] data;
   }
 
   // Retorna o número de linhas
@@ -97,7 +97,54 @@ class Matrix {
 
     return result;
   }
-};
+  Matrix* multiply(Matrix other) {
+    // Verifica se as matrizes podem ser multiplicadas
+    if (cols != other.rows) {
+      std::cerr << "Não é possível multiplicar as matrizes. Número de colunas da primeira matriz deve ser igual ao número de linhas da segunda matriz." << std::endl;
+      Matrix* nulla = new Matrix(0, 0);
+      return nulla;  // Retorna uma matriz vazia em caso de erro
+    }
 
+    // Cria uma nova matriz para armazenar o resultado
+    Matrix* result = new Matrix(rows, other.cols);
+
+    // Realiza a multiplicação de matrizes
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < other.cols; ++j) {
+        int sum = 0;
+        for (int k = 0; k < other.rows; ++k) {
+          sum += data[i][k] * other.data[k][j];
+        }
+
+        result->setElement(i, j, sum);
+      }
+    }
+
+    return result;
+  }
+
+  void multiplica(Matrix A, Matrix B) {
+    // Verifica se as matrizes podem ser multiplicadas
+    if (A.cols != B.rows) {  // Tem que checar se this.dimensions bate ¬¬
+      std::cerr << "Void: Não é possível multiplicar as matrizes. Número de colunas da primeira matriz deve ser igual ao número de linhas da segunda matriz." << std::endl;
+      return;  // Retorna uma matriz vazia em caso de erro
+    }
+
+    // Cria uma nova matriz para armazenar o resultado
+    Matrix* result = new Matrix(A.rows, B.cols);
+
+    // Realiza a multiplicação de matrizes
+    for (int i = 0; i < A.rows; ++i) {
+      for (int j = 0; j < B.cols; ++j) {
+        int sum = 0;
+        for (int k = 0; k < B.rows; ++k) {
+          sum += A.data[i][k] * B.data[k][j];
+        }
+
+        this->setElement(i, j, sum);
+      }
+    }
+  }
+};
 
 #endif
