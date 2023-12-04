@@ -46,17 +46,28 @@ int main() {
   // Criar um array de matrizes para teste
   Matrix matrices[] = {Matrix{2, 2}, Matrix{2, 2}, Matrix{2, 2}};  // Adicione suas próprias matrizes conforme necessário
 
-  for(int i = 0; i < 3; i++){
-    matrices[i].setElement(0,0,i+1);
-    matrices[i].setElement(1,1,i+1);
+  for (int i = 0; i < 3; i++) {
+    matrices[i].setElement(0, 0, i + 1);
+    matrices[i].setElement(1, 1, i + 1);
   }
 
   // Criar uma árvore de segmentação
-  SegmentTree segmentTree(matrices, sizeof(matrices) / sizeof(matrices[0]));
+  SegmentTree segTree(matrices, sizeof(matrices) / sizeof(matrices[0]));
 
   // Imprimir a árvore
   cout << "Árvore de Segmentação:" << endl;
-  segmentTree.print();
+  segTree.print();
+
+  Matrix n(2, 2);
+  n.setElement(0, 0, 9);
+  n.setElement(1, 1, 9);
+
+  segTree.update(2, n);
+
+  segTree.print();
+
+  cout << "query" << endl;
+  segTree.segProduct(1, 2)->print();
 
   return 0;
 }
