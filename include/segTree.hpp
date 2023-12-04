@@ -1,3 +1,6 @@
+#ifndef SEGTREE_HPP
+#define SEGTREE_HPP
+
 #include "matrix.hpp"
 
 struct Node {
@@ -6,11 +9,16 @@ struct Node {
 
   // Construtor:: Constrói nó com uma matriz identidade R2
   Node() {
-    m = new Matrix(2, 2);
-    m->setElement(0, 0, 1);
-    m->setElement(0, 1, 0);
-    m->setElement(1, 0, 0);
-    m->setElement(1, 1, 1);
+    m = new Matrix(2);
+  }
+  // Constrói uma matriz identidade de ordem n (RN);
+  Node(int n) {
+    m = new Matrix(n, n);
+    for (int i = 0; i < n * n; i++) {
+      // Se o número da linha é igual ao número da coluna, entrada recebe 1. Se não, zero.
+      unsigned long int k = (i / n == i % n) ? 1 : 0;
+      m->setElement(i / n, i % n, k);
+    }
   }
   Node(Matrix cp) {
     m = new Matrix(cp.getRows(), cp.getCols());
@@ -19,8 +27,6 @@ struct Node {
         m->setElement(i, j, cp.getElement(i, j));
       }
     }
-
-    // ¬ Fazer cópia
   }
   /* ~Node() {
     //delete m;
@@ -36,10 +42,21 @@ class SegmentTree {
   int size;
 
  public:
-  // Construtor
-  SegmentTree(const Matrix* matrices, int numMatrices) {
+  // Constrói SegTree a partir de array de matrizes de tamanho numMatrices
+  SegmentTree(Matrix* matrices, int numMatrices) {
     size = numMatrices;
     tree = new Node[4 * size];  // Usando 4 * size para garantir espaço suficiente
+
+    // Construir a árvore recursivamente
+    build(1, 0, size - 1, matrices);
+  }
+
+  // Constrói SegTree com "numMatrices" matrizes identidade nas folhas
+  SegmentTree(int numMatrices) {
+    size = numMatrices;
+    tree = new Node[4 * size];  // Usando 4 * size para garantir espaço suficiente
+
+    Matrix matrices[size];
 
     // Construir a árvore recursivamente
     build(1, 0, size - 1, matrices);
@@ -53,29 +70,13 @@ class SegmentTree {
   // Construção da árvore
   void build(int node, int start, int end, const Matrix* matrices) {
     if (start == end) {
-      tree[node] = Node(matrices[start]);
-
+      tree[node] = (matrices[start].getRows() <= 0) ? Node() : Node(matrices[start]);
     } else {
       int mid = (start + end) / 2;
       build(2 * node, start, mid, matrices);
       build(2 * node + 1, mid + 1, end, matrices);
 
-      cout << node << endl;
-      tree[node].m->multiplica(*tree[2 * node].m, *tree[2 * node + 1].m);
-
-      /* Matrix* combine = tree[2 * node].m->multiply(*(tree[2 * node + 1].m));
-
-
-      for (int i = 0; i < combine->getRows(); ++i) {
-        for (int j = 0; j < combine->getCols(); ++j) {
-         tree[node].m->setElement(i, j, combine->getElement(i, j));
-        }
-      }
-      delete combine; */
-      // combine = (tree[2 * node].m)->multiply( &tree[2 * node + 1].m);
-
-      // Combine as informações dos filhos
-      // tree[node].m = (tree[2 * node].m)->multiply( tree[2 * node + 1].m);
+      tree[node].m->multiply(*tree[2 * node].m, *tree[2 * node + 1].m);
     }
   }
   // Método para modificar uma matriz nas folhas da árvore e refazer
@@ -90,6 +91,7 @@ class SegmentTree {
       delete tree[node].m;
       tree[node].m = new Matrix(newMatrix.getRows(), newMatrix.getCols());
 
+      // Copia os valores das entradas da NOVA MATRIZ na folha
       for (int i = 0; i < newMatrix.getRows(); i++) {
         for (int j = 0; j < newMatrix.getCols(); j++) {
           tree[node].m->setElement(i, j, newMatrix.getElement(i, j));
@@ -106,7 +108,7 @@ class SegmentTree {
       }
 
       // Combine as informações dos filhos
-      tree[node].m->multiplica(*tree[2 * node].m, *tree[2 * node + 1].m);
+      tree[node].m->multiply(*tree[2 * node].m, *tree[2 * node + 1].m);
     }
   }
   // Método para imprimir a árvore
@@ -133,7 +135,8 @@ class SegmentTree {
 
   // Método para obter o produto do intervalo [l, r]
   Matrix* segProduct(int l, int r) const {
-    return recursiveProduct(1, 0, size - 1, l, r);
+    Matrix* segProduct = recursiveProduct(1, 0, size - 1, l, r);
+    return segProduct;
   }
 
   // Método auxiliar para obter o produto do intervalo recursivamente
@@ -141,8 +144,10 @@ class SegmentTree {
     // Caso 0: O intervalo [l, r] está completamente fora do intervalo [start, end]
     if (start > r || end < l) {
       // Retorna uma matriz nula
-      Matrix* nulla = new Matrix(0, 0);
-      return nulla;
+      // Matrix* nulla = new Matrix(0, 0);
+      Matrix* I = new Matrix(tree[node].m->getRows());
+
+      return I;
     }
 
     // Caso 1: O intervalo [start, end] está completamente dentro do intervalo [l, r]
@@ -155,19 +160,21 @@ class SegmentTree {
     Matrix* leftResult = recursiveProduct(2 * node, start, mid, l, r);
     Matrix* rightResult = recursiveProduct(2 * node + 1, mid + 1, end, l, r);
 
-
- // Combina as informações dos filhos
+    // Combina as informações dos filhos
     if (leftResult->getCols() > 0 && rightResult->getRows() > 0) {
       Matrix* finalResult = new Matrix(leftResult->getCols(), rightResult->getRows());
-      finalResult->multiplica(*leftResult, *rightResult);
+      finalResult->multiply(*leftResult, *rightResult);
+
       return finalResult;
     }
     // Um dos segmentos (leftResult or rightResult) pode ser uma matriz degenerada nula.
     // Neste caso apenas o segmento não nulo é retornado na recursão.
-     else if (leftResult->getCols() > 0) {
+    else if (leftResult->getCols() > 0) {
       return leftResult;
     } else if (rightResult->getRows() > 0) {
       return rightResult;
     }
   }
 };
+
+#endif

@@ -47,7 +47,7 @@ libraries= $(wildcard $(lib)/*)									# Uma lista com todos os arquivos na pas
 
 # Compila o executável com todos os pré-requisitos ($^) e nomeando com o nome da regra ($target) usando $@
 ${target}: $(objetcts) $(headers)
-	${cxx} ${cflags} $^ -o $@ -g -pg
+	${cxx} ${cflags} $^ -o $@ -g
 	
 # faz o mesmo mas a regra chama "all" (pro sistema de VPLs)
 all: $(objetcts) $(headers)
@@ -59,6 +59,9 @@ ${obj}/%.o:  ${src}/%.cpp $(headers)
 
 run: ${target}
 	./${target}
+
+test: ${target}
+	./${target} 2  <  _-_Miscelânea/input.in	
 	
 # Apaga apenas os .o e executáveis previstos neste makefile 
 # (e também qualquer objeto nomeado por um header template)
