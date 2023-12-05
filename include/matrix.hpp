@@ -93,6 +93,16 @@ class Matrix {
     }
   }
 
+ void printTransposed() {
+    for (int i = 0; i < cols; ++i) {
+      for (int j = 0; j < rows; ++j) {
+        cout << data[j][i] << " ";
+      }
+      cout << endl;
+    }
+  }
+
+
   // Atribui o produto das Matrizes A x B a matriz atual (que chama o método).
   void multiply(Matrix A, Matrix B) {
     // Verifica se as matrizes podem ser multiplicadas

@@ -128,24 +128,24 @@ int main(int argc, char* argv[]) {
         cout << "segment Matrix [" << from << "," << to << "]" << endl;
         segment->print();
       }
-      Matrix vector(1, R);
+      Matrix vector(R, 1);
 
       for (int i = 0; i < R; i++) {
         long int k;
         cin >> k;  // considerou-se reutilizar a variável "to" aqui para definir as entradas do vetor;
         // porém optou-se por não fazê-lo em razão da legibilidade e por não ser necessário ter um 'to' do tipo long;
-        vector.setElement(0, i, k);
+        vector.setElement(i, 0, k);
       }
       if (verbose) {
         cout << "Vector BEFORE:" << endl;
         vector.print();
       }
-      Matrix result(1, R);
-      result.multiply(vector, *segment);
+      Matrix result(R, 1);
+      result.multiply(*segment, vector);
       if (verbose) {
         cout << "Product Result:" << endl;
       }
-      result.print();
+      result.printTransposed();
     } else {
       cout << "Utilize apenas os comandos:" << endl;
       cout << "'u' (update): para atualizar uma folha da Árvore de Segmentação" << endl;
