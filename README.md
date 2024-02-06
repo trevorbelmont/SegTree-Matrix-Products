@@ -1,0 +1,2 @@
+Este código implementa uma árvore de segmentação cujas folhas são matrizes e os nodos internos a combinação linear dos respectivos segmentos.
+Este código, ainda que 100% funcional, está ainda na fase de fast-prototyping - ou seja, não está formatado nas boas práticas de programação, pois priorizou-se resolver rapidamente o problema lógico em mãos (e posteriormente formatar o código adequadamente).
