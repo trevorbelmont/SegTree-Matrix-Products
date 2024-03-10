@@ -12,141 +12,28 @@ class Matrix {
   long unsigned int** data;
 
  public:
-  // Construtor padrão. Útil para alocação dinâmica
-  Matrix() {
-    rows = -1;
-    cols = -1;
-  }
+  // Construtores
+  Matrix();
+  Matrix(int numRows, int numCols);
+  Matrix(int n);
 
-  // Construtor que inicializa a matriz com o número de linhas e colunas especificado
-  Matrix(int numRows, int numCols) : rows(numRows), cols(numCols) {
-    // Aloca dinamicamente memória para as linhas
-    data = new long unsigned int*[rows];
+  // Destrutor
+  ~Matrix();
 
-    // Aloca dinamicamente memória para cada coluna em cada linha
-    for (int i = 0; i < rows; ++i) {
-      data[i] = new long unsigned int[cols];
-    }
-  }
-  // Cria matriz Identidade de Ordem n.
-  Matrix(int n) {
-    rows = cols = n;
-    data = new long unsigned int*[n];
+  // Métodos de acesso
+  int getRows() const;
+  int getCols() const;
+  void setElement(int row, int col, long unsigned int value);
+  long unsigned int getElement(int row, int col) const;
 
-    // Aloca dinamicamente memória para cada coluna em cada linha
-    for (int i = 0; i < n; ++i) {
-      data[i] = new long unsigned int[n];
-    }
-    for (int i = 0; i < n * n; i++) {
-      // Se o número da linha é igual ao número da coluna, entrada recebe 1. Se não, zero.
-      unsigned long int k = (i / n == i % n) ? 1 : 0;
-      data[i / n][i % n] = k;
-    }
-  }
+  // Métodos de impressão
+  void print();
+  void printTransposed();
 
-  // Destrutor que libera a memória alocada
-  ~Matrix() {
-    // Libera a memória de cada coluna em cada linha
-    for (int i = 0; i < rows; ++i) {
-      // delete[] data[i];
-    }
-
-    // Libera a memória das linhas
-    // delete[] data;
-  }
-
-  // Retorna o número de linhas
-  int getRows() const {
-    return rows;
-  }
-
-  // Retorna o número de colunas
-  int getCols() const {
-    return cols;
-  }
-
-  // Define o valor de uma entrada na matriz
-  void setElement(int row, int col, long unsigned int value) {
-    if (row >= 0 && row < rows && col >= 0 && col < cols) {
-      data[row][col] = value;
-    } else {
-      cout << "Matrix::setElement : Entrada/Ìndices inválidos!" << endl;
-    }
-  }
-
-  // Obtém o valor de uma entrada na matriz
-  long unsigned getElement(int row, int col) const {
-    if (row >= 0 && row < rows && col >= 0 && col < cols) {
-      return data[row][col];
-    } else {
-      cout << "Matrix::getElement : Índices (entrada) Inválido!" << endl;
-      return -1;  // Valor de retorno padrão em caso de índices inválidos
-    }
-  }
-
-  void print() {
-    for (int i = 0; i < rows; ++i) {
-      for (int j = 0; j < cols; ++j) {
-        cout << data[i][j] << " ";
-      }
-      cout << endl;
-    }
-  }
-
- void printTransposed() {
-    for (int i = 0; i < cols; ++i) {
-      for (int j = 0; j < rows; ++j) {
-        cout << data[j][i] << " ";
-      }
-      cout << endl;
-    }
-  }
-
-
-  // Atribui o produto das Matrizes A x B a matriz atual (que chama o método).
-  void multiply(Matrix A, Matrix B) {
-    // Verifica se as matrizes podem ser multiplicadas
-    if (A.cols != B.rows) {  // Tem que checar se this.dimensions bate ¬¬
-      cout << "Matrix::multiply (void): Dimensões das matrizes não satisfazem a operação de multiplicação!" << endl;
-      return;  // Retorna uma matriz vazia em caso de erro
-    }
-
-    // Cria uma nova matriz para armazenar o resultado
-    Matrix* result = new Matrix(A.rows, B.cols);
-
-    // Realiza a multiplicação de matrizes
-    for (int i = 0; i < A.rows; ++i) {
-      for (int j = 0; j < B.cols; ++j) {
-        long unsigned int sum = 0;
-        for (int k = 0; k < A.cols; ++k) {
-          sum += A.data[i][k] * B.data[k][j];
-        }
-
-        result->setElement(i, j, sum % 100000000);
-      }
-    }
-
-    for (int i = 0; i < A.rows; ++i) {
-      for (int j = 0; j < B.cols; ++j) {
-        this->setElement(i, j, result->getElement(i, j));
-      }
-    }
-  }
-
-  // ------ Sobrecarregamentos de métodos de multiplicação ---------  //
-  Matrix* multiply(Matrix other) {
-    Matrix* r;
-    r->multiply(*(this), other);
-
-    return r;
-  }
-
-  Matrix* operator*(Matrix& other) {
-    Matrix* r;
-    r->multiply(*(this), other);
-
-    return r;
-  }
+  // Operações de matriz
+  void multiply(Matrix A, Matrix B);
+  Matrix* multiply(Matrix other);
+  Matrix* operator*(Matrix& other);
 };
 
 #endif
